@@ -3,32 +3,47 @@ let list = document.querySelector('#list');
 
 inputbox.addEventListener("keyup", function(event) {
     if (event.key == "Enter") {
-        addItem(this.value)
+        addItem(this.value);
         this.value = "";
+        saveData();
     }
-})
+});
+
+list.addEventListener("click", function(event) {
+    if (event.target.tagName === "LI") {
+        toggleDone(event.target);
+    } else if (event.target.tagName === "I") {
+        removeItem(event.target.parentElement);
+    }
+});
+
+let addItem = (taskDescription) => {
+    let listItem = document.createElement("li");
+    listItem.innerHTML = `${taskDescription}<i></i>`;
+    
+    list.appendChild(listItem);
+    saveData();
+};
+
+function toggleDone(task) {
+    task.classList.toggle('done');
+    saveData();
+}
+
+function removeItem(task) {
+    task.remove();
+    saveData();
+}
 
 function saveData() {
     localStorage.setItem("data", list.innerHTML);
 }
 
 function showtask() {
-    list.innerHTML = localStorage.getItem("data");
+    let savedData = localStorage.getItem("data");
+    if (savedData) {
+        list.innerHTML = savedData;
+    }
 }
 
 showtask();
-
-let addItem = (inputbox) => {
-    let listItem = document.createElement("li");
-    listItem.innerHTML = `${inputbox}<i></i>`;
-
-    listItem.addEventListener("click", function() {
-        this.classList.toggle('done');
-    })
-
-    listItem.querySelector("i").addEventListener("click", function() {
-        listItem.remove();
-    })
-
-    list.appendChild(listItem);
-}
